@@ -120,5 +120,29 @@ blogRouter.get("/:id", authMiddleware, async(c) => {
 
 
 });
+blogRouter.delete("/:id", authMiddleware, async(c) => {
+
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+
+  const id = c.req.param("id")
+  if (!id)return c.json({message:"Post id required"})
+
+  try {
+    const blog = await prisma.blog.delete({
+      where:{id:id}
+    });
+    
+    return c.json({ message: "blog post deleted!"});
+  } catch (error) {
+    c.status(411);
+    return c.json({ message: "Error deleting blog post", error: error });
+  }
+
+
+});
+
+
 
 export default blogRouter;
