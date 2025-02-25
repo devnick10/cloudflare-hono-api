@@ -35,11 +35,11 @@ blogRouter.post("/", authMiddleware, async (c) => {
       data: {
         title: body.title,
         content: body.content,
-        autherId: userid
+        autherId: userid,
       }
     })
 
-    return c.json({ message: "blog created!"});
+    return c.json({ message: "blog created!",id:blog.id});
   } catch (error) {
     c.status(411);
     return c.json({ message: "blog creation failed!", error: error });
@@ -89,7 +89,18 @@ blogRouter.get("/bulk", async(c) => {
   }).$extends(withAccelerate());
 
   try {
-    const blogs = await prisma.blog.findMany();
+    const blogs = await prisma.blog.findMany({
+       select:{
+        content:true,
+        title:true,
+        id:true,
+        user:{
+          select:{
+            name:true,
+          }
+        }
+       }
+    });
     
     return c.json({ message: "blog fetched!", blogs });
   } catch (error) {
@@ -109,7 +120,17 @@ blogRouter.get("/:id", authMiddleware, async(c) => {
 
   try {
     const blog = await prisma.blog.findUnique({
-      where:{id:id}
+      where:{id:id},
+      select:{
+        id:true,
+        title:true,
+        content:true,
+        user:{
+          select:{
+            name:true
+          }
+        }
+      }
     });
     
     return c.json({ message: "blog post fetched!", blog });

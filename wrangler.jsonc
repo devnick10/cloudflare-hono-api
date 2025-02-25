@@ -5,6 +5,7 @@
   "compatibility_date": "2025-02-24",
   "vars": {
     "DATABASE_URL":"",
-    "JWT_SECRET":""
+    "JWT_SECRET":"",
+    "CORS_ORIGIN":""
   }
 }
